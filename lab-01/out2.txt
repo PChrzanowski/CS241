@@ -1,0 +1,8 @@
+total 28
+drwx------ 2 pchrzanowski ugrad 4096 Aug 26 09:11 .
+drwxr-xr-x 4 pchrzanowski ugrad 4096 Aug 25 12:22 ..
+-rwxr-xr-x 1 pchrzanowski ugrad 8522 Aug 25 10:56 a.out
+-rw------- 1 pchrzanowski ugrad  407 Aug 25 12:25 asciiArt.c
+-rw------- 1 pchrzanowski ugrad   41 Aug 26 09:09 out1.txt
+-rw------- 1 pchrzanowski ugrad    0 Aug 26 09:11 out2.txt
+-rw-r--r-- 1 pchrzanowski ugrad  136 Aug 25 10:57 philip-chrzanowski.txt
