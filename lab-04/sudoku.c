@@ -1,0 +1,245 @@
+/*************************************************/
+/* philip chrzanowski */
+/* 10/8/2016*/
+/* CS-241 Section 003 */
+/*************************************************/
+
+#include <stdio.h>
+int board[9][9];
+void clearArray();
+int buildArray(int c, int x, int y);
+int notValid(int x, int y, int value);
+int checkCol(int x, int y, int value);
+int checkRow(int x, int y, int value);
+int checkBox(int x, int y, int value);
+int recursion (int boardArray[][9], int x, int y);
+void purgeVars();
+int ignoreInput = 0;
+int inputCount = 0;
+int solved = 0;
+int x = 0;
+int y = 0;
+int value;
+
+void printBoard()
+{
+  int i, j;
+  for (i = 0; i < 9; i++)
+    {
+    for(j = 0; j < 9; j++)
+      {
+	printf("%d" , board[i][j]);
+      }  
+    }
+   putchar('\n');
+   putchar('\n');
+}
+
+int main()
+{
+  
+  
+  int c;
+  clearArray();
+  while(EOF != (c=getchar()))
+    {
+      if(c!= '\n' && (c!= '.'))
+	{
+	  printf("%c",c);
+	}
+      else if(c == '.')
+	{
+	  printf(".");
+	}
+      if(c != '\n' && ignoreInput != 1){
+	if(buildArray(c,inputCount/9,inputCount%9) != 0)
+	  {
+	    // printf("Ignoring Input \n");
+	    ignoreInput = 1;
+	  }
+	else
+	  {
+	    x++;
+	    y++;
+	    inputCount++;
+	  }
+      }
+      /*If we see a new line character reset all of the items and we have solved or tried to solve the last puzzle*/
+      if(c == '\n')
+	{
+	  printf("\n");
+	  if(inputCount != 81 || ignoreInput == 1)
+	    {
+	      printf("Error\n\n");
+	      purgeVars();
+	    }
+	  else
+	    {
+	      if(recursion(board,0,0) == 1)
+		{
+		  printf("No solution\n\n");
+		  purgeVars();
+		}
+	      else
+		{
+		  // printf("Solution found \n");
+		  printBoard();
+		  //printf("\n");
+		}
+	 
+	    }
+	}
+    }
+  return 0;
+}
+/*clears array and populates it with all zeros */
+void clearArray()
+{
+  int x,y;
+  for(x = 0; x < 9; x++) {
+    for(y = 0; y < 9 ; y++) {
+      board[x][y] = 0;
+    }
+  }
+}
+/*reads in the text and builds the array */
+int buildArray(int c, int x, int y)
+{
+  if( c >= '1' && c <= '9'){
+    if(notValid(x,y,(c - '0')) == 0){
+      board[x][y] = c - '0';
+      return 0;
+    }
+  } 
+  else if( c == '.'){
+    board[x][y] = 0;
+    return 0;
+  }
+  // printf("Not valid character \n");
+  return 1;
+}
+
+/* wrapper function that calls checkCol, checkRow, and checkBox and errors if there was an invalid character placement in one of them */
+
+int notValid(int x, int y, int value)
+{
+  if(checkRow(x,y,value) == 0 && checkCol(x,y,value) == 0 && checkBox(x,y,value) == 0)
+    {
+      return 0;
+    }
+  //printf("Error in isValid \n");
+  return 1;
+}
+int checkCol (int x, int y, int value)
+{
+  int i = 0;
+  for(; i < 9; i++)
+    {
+      if(board[x][i] == value)
+	{
+	  //  printf("checkCol is busted \n");
+	  return 1;
+	}
+    }
+  // printf("checkCol is all good \n");
+  return 0;
+}
+
+int checkRow (int x, int y, int value)
+{
+  int i = 0;
+  for(; i < 9; i++)
+    {
+      if(board[i][y] == value)
+	{
+	  // printf("checRow is busted! \n");
+	  return 1;
+	}
+    }
+  // printf("checkRow is all good! \n");
+  return 0;
+}
+
+int checkBox(int x, int y, int value)
+{
+  int i = 0;
+  int j = 0;
+  int rowOffset = (x/3) * 3;
+  int colOffset = (y/3) * 3;
+  
+  for(i = 0; i < 3; i++)
+    {
+      for(j = 0; j < 3; j++)
+	{
+	  if(board[i + rowOffset][j + colOffset] == value)
+	    {
+	      return 1;
+	    }
+	}
+    }
+return 0;
+}
+int recursion(int boardArray[][9] , int x, int y)
+{
+  // printf("entered recursion\n");
+  int yLoc = y;
+  int checkNum = 1;
+  if(yLoc >= 9)
+    {
+      return 0;
+    }
+  else if (boardArray[x][y] == 0)
+    {
+      for(checkNum = 1; checkNum <= 9; checkNum++)
+	{
+	  if(!notValid(x,y,checkNum))
+	    {
+	      // printf("valid spot for insertion \n");
+	      boardArray[x][y] = checkNum;
+	      if(x + 1 < 9)
+		{
+		  if (recursion(boardArray, x + 1, y) == 0)
+		    {
+		      return 0;
+		    }
+		}
+	      else
+		{
+		  if (recursion(boardArray, 0, y+1) == 0)
+		    {
+		      return 0;
+		    }
+		}
+	    }
+	}
+      //  printf("Bottomed out at x=%d, y=%d\n", x, y);
+      boardArray[x][y] = 0;
+    }
+  else
+    {
+      if(x + 1 < 9)
+	{
+	  if(recursion(boardArray, x + 1, y) == 0)
+	    {
+	      return 0;
+	    }
+	}
+      else
+	{
+	  if (recursion(boardArray, 0, y+1) == 0)
+	    {
+	      return 0;
+	    }
+	    
+	}     
+    }
+  return 1;
+}
+void purgeVars()
+{
+  x = 0;
+  y = 0;
+  inputCount= 0;
+  ignoreInput = 0;
+  clearArray();
+}
